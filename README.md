@@ -1,46 +1,199 @@
-# Getting Started with Create React App
+ 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# react-easy-state-management
 
-## Available Scripts
+A flexible and efficient state management library for React applications. Simplify state handling and improve code maintainability.
 
-In the project directory, you can run:
+# react-easy-state-management
+# `<react-easy-state-management />` [![npm](https://img.shields.io/npm/v/react-customs-hooks.svg)](https://www.npmjs.com/package/react-customs-hooks) [![npm](https://img.shields.io/npm/dm/react-customs-hooks.svg)](https://www.npmjs.com/package/react-customs-hooks)
 
-### `yarn start`
+| ![](demo/simple1.png) | ![](demo/simple2.png) | ![](demo/demo.gif) |
+| --------------------- | --------------------- | ------------------ |
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+ 
+ 
+ 
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Installation
 
-### `yarn test`
+You can install this package via npm:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install react-easy-state-management
+```
 
-### `yarn build`
+You can install this package via yarn:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+yarn install react-easy-state-management
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Usage
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Creating Contexts
 
-### `yarn eject`
+First, you need to create contexts for your application's different data structures. For example:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```javascript
+import { createContext } from 'react';
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+// Create contexts
+export const userContext = createContext<any | undefined>(undefined);
+export const imagesContext = createContext<any | undefined>(undefined);
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+const contextNames:Array<contextName> = [
+    {
+        contextName: 'userContext',
+        context: userContext,
+        initialValue:{
+            name: '',
+            email: '',
+            age:[],
+            gender: '',
+            location: '',
+            bio: '',
+            image: '',
+            followers: [],
+        }
+    },
 
-## Learn More
+    {
+        contextName: 'imagesContext',
+        context: imagesContext,
+        initialValue:{
+            images: [],
+            
+        }
+    },
+     
+]
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+export default  contextNames
+```
+
+### Using `Provider`
+
+To use this state management package, you can wrap your components with the `Provider` component. This component allows you to set up context providers for your application.
+
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import contextNames from './context/contextNames';
+import { Provider } from './context';
+ 
+
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+root.render(
+  <React.StrictMode>
+    <Provider contextsList={contextNames}>
+    <App />
+    </Provider>
+  </React.StrictMode>
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
+
+```
+
+### Custom Hooks
+
+You can access state and dispatch functions with custom hooks:
+
+```javascript
+ import React, { useEffect } from 'react';
+import { imagesContext, userContext } from './context/contextNames';
+import { useEasyState } from 'react-easy-state-management';
+ 
+ 
+function App() {
+  
+  const  [userstate , userDispatch ] = useEasyState(userContext)
+  const [ImageSate , imageDispatch ] = useEasyState(imagesContext)
+
+  useEffect(()=>{
+    userDispatch({
+    type:"name",
+    payload:"Piyas",
+    offline:true
+  }) 
+  imageDispatch({
+    type:"username",
+    payload:"Piyas",
+    offline: false
+
+  })
+  userDispatch({
+    type:"email",
+    payload:"Piyas@gmail.com",
+    offline:true
+  })
+ 
+  },[])
+
+
+  console.log(userstate)
+
+
+
+  return (
+    <div className="App">
+    {userstate.name}
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+## API
+
+### `Provider`
+
+- `<Provider contextsList={[]}>{/* Your app here */}</Provider>`
+
+  The `Provider` component is used to wrap your app and provide context providers for state management. Pass an array of contexts to set up providers for your application.
+
+### `useEasyState`
+
+- `const [state, setState] = useEasyState(context)`
+
+  A custom hook that allows components to access state and dispatch functions for the specified context.
+
+## Examples
+
+For more examples, check the `/examples` directory in this repository.
+
+## Configuration
+
+Explain any configuration options, if applicable.
+
+## Contributing
+
+Contributions are welcome! If you want to contribute to this project, follow the guidelines in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+If you have questions or need assistance, feel free to contact us at contact@yourwebsite.com.
+
+Your Website: [https://www.yourwebsite.com](https://www.yourwebsite.com)
+
+---
+**Note**: Customize this template with your package-specific details. Provide comprehensive documentation and examples to help users understand and use your state management package effectively.
+```
+
+ 
