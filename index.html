@@ -96,6 +96,9 @@
             <a class="btn btn-primary" href="https://github.com/piyas1234/react-easy-state-management" target="_blank">
                 GitHub Repository
             </a>
+            <a class="btn btn-primary" href="https://github.com/piyas1234/react-easy-state-management" target="_blank">
+                Npm
+            </a>
         </div>
     </div>
     <div class="side-bar">
@@ -119,21 +122,24 @@
                 Simplify state handling and improve code maintainability.
             </p>
         </div>
-        <div id="installation">
-            <h2 class="title">Installation</h2>
-            <p>You can install this package via npm:</p>
-            <pre class="installation-code">
-                <code>
-                    npm install react-easy-state-management
-                </code>
-            </pre>
-            <p>Or you can install this package via yarn:</p>
-            <pre class="installation-code">
-                <code>
-                    yarn add react-easy-state-management
-                </code>
-            </pre>
-        </div>
+      <div id="installation">
+    <h2 class="title">Installation</h2>
+    <p>You can install this package via npm:</p>
+    <pre class="installation-code" id="installation-code-npm">
+        <code>
+            npm install react-easy-state-management
+        </code>
+    </pre>
+    <button class="copy-button" data-clipboard-target="#installation-code-npm">Copy</button>
+    <p>Or you can install this package via yarn:</p>
+    <pre class="installation-code" id="installation-code-yarn">
+        <code>
+            yarn add react-easy-state-management
+        </code>
+    </pre>
+    <button class="copy-button" data-clipboard-target="#installation-code-yarn">Copy</button>
+</div>
+
         <div id="creating-contexts">
             <h2 class="title">Creating Contexts</h2>
             <p>
@@ -294,4 +300,23 @@ export default App;
         &copy; 2023 React Easy State Management
     </footer>
 </body>
+<script>
+    document.querySelectorAll('.copy-button').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var targetId = this.getAttribute('data-clipboard-target');
+            var targetElement = document.querySelector(targetId);
+            var textToCopy = targetElement.innerText;
+
+            var tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            alert('Copied to clipboard: ' + textToCopy);
+        });
+    });
+</script>
+
 </html>
