@@ -1,16 +1,7 @@
- 
+# `<react-easy-state-management />` [![npm](https://img.shields.io/npm/v/react-customs-hooks.svg)](https://github.com/piyas1234/react-easy-state-management) [![npm](https://img.shields.io/npm/dm/react-easy-state-management.svg)](https://github.com/piyas1234/react-easy-state-management)
 
-# react-easy-state-management
 
-A flexible and efficient state management library for React applications. Simplify state handling and improve code maintainability.
-
-# react-easy-state-management
-# `<react-easy-state-management />` [![npm](https://img.shields.io/npm/v/react-customs-hooks.svg)](https://www.npmjs.com/package/react-customs-hooks) [![npm](https://img.shields.io/npm/dm/react-customs-hooks.svg)](https://www.npmjs.com/package/react-customs-hooks)
-
-| ![](demo/simple1.png) | ![](demo/simple2.png) | ![](demo/demo.gif) |
-| --------------------- | --------------------- | ------------------ |
-
- 
+ A flexible and efficient state management library for React applications. Simplify state handling and improve code maintainability.
  
  
 
@@ -172,7 +163,7 @@ export default App;
 
 ## Examples
 
-For more examples, check the `/examples` directory in this repository.
+For more examples, check the `https://github.com/piyas1234/react-easy-state-management` directory in this repository.
 
 ## Configuration
 
@@ -181,6 +172,7 @@ Explain any configuration options, if applicable.
 ## Contributing
 
 Contributions are welcome! If you want to contribute to this project, follow the guidelines in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+`https://github.com/piyas1234/react-easy-state-management`
 
 ## License
 
@@ -190,7 +182,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you have questions or need assistance, feel free to contact us at contact@yourwebsite.com.
 
-Your Website: [https://www.yourwebsite.com](https://www.yourwebsite.com)
+Your Website: [https://sites.google.com/view/piyastalukder/home](https://sites.google.com/view/piyastalukder/home)
 
 ---
 **Note**: Customize this template with your package-specific details. Provide comprehensive documentation and examples to help users understand and use your state management package effectively.
