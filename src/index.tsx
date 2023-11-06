@@ -6,7 +6,6 @@ import reportWebVitals from './reportWebVitals';
 import contextNames from './context/contextNames';
 import { Provider } from './context';
  
-
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

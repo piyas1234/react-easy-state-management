@@ -26,22 +26,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useEasyState = exports.Provider = void 0;
+exports.useEasyState = exports.Provider = exports.globalContext = void 0;
 const react_1 = __importStar(require("react"));
 const useEasyState_1 = __importDefault(require("./useEasyState"));
 exports.useEasyState = useEasyState_1.default;
 const offlineFunction_1 = require("./offlineFunction");
-// Define the RenderContext component
+const helper_1 = require("./helper");
 function RenderContext({ context, index, children, initialValue }) {
     const reducer = (state, action) => {
         switch (action.type) {
-            case action.type === "oflineData":
+            case "offlineData":
                 return {
                     ...state,
                     ...action.payload,
                 };
-            case action.type:
-                if (action.offline && !action.paging) {
+            default:
+                if (action.offline) {
                     (0, offlineFunction_1.storeData)(action.type, action.payload);
                 }
                 if (action.paging) {
@@ -51,8 +51,6 @@ function RenderContext({ context, index, children, initialValue }) {
                     };
                 }
                 return { ...state, [action.type]: action.payload };
-            default:
-                return state;
         }
     };
     const [state, dispatch] = (0, react_1.useReducer)(reducer, initialValue);
@@ -65,13 +63,12 @@ function RenderContext({ context, index, children, initialValue }) {
             const response = await Promise.all(promises);
             const obj = {};
             Object.keys(state).map((val) => {
-                obj[val] = response[Object.keys(state).indexOf(val) || state[val]];
+                const result = response[Object.keys(state).indexOf(val)];
+                obj[val] = result ? result : state[val];
             });
             dispatch({
-                type: "oflineData",
+                type: "offlineData",
                 payload: obj,
-                paging: false,
-                offline: false,
             });
         }
         catch (error) {
@@ -81,17 +78,17 @@ function RenderContext({ context, index, children, initialValue }) {
     (0, react_1.useEffect)(() => {
         getDataFunction();
     }, []);
-    // Create a context value object
     const contextValue = {
         state,
         dispatch,
     };
-    return (react_1.default.createElement(context.Provider, { key: index, value: contextValue }, children));
+    return (react_1.default.createElement(context.Provider, { value: contextValue }, children));
 }
+exports.globalContext = (0, react_1.createContext)(undefined);
 function Provider(props) {
     const { contextsList } = props;
-    // Create a nested structure of RenderContext components
-    const renderStructure = (0, react_1.useMemo)(() => contextsList.reduceRight((children, data, index) => (react_1.default.createElement(RenderContext, { context: data.context, initialValue: data.initialValue, key: index }, children)), props.children), [contextsList, props.children]);
-    return react_1.default.createElement(react_1.default.Fragment, null, renderStructure);
+    const contextList = (0, helper_1.contextCreator)(contextsList);
+    const renderStructure = (0, react_1.useMemo)(() => contextList.reduceRight((children, data, index) => (react_1.default.createElement(RenderContext, { context: data.context, initialValue: data.initialValue, key: index }, children)), props.children), [contextList, props.children]);
+    return (react_1.default.createElement(exports.globalContext.Provider, { value: contextList }, renderStructure));
 }
 exports.Provider = Provider;

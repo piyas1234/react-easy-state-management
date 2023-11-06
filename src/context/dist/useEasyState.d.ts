@@ -1,1 +1,1 @@
-export default function useEasyState(context: any): any[];
+export default function useEasyState(contextName: any): any[];

@@ -1,40 +1,20 @@
-import { createContext } from 'react';
-import { contextName } from './contextTypes';
+import { ContextName } from "./contextTypes";
 
-// Define the context
-export const userContext = createContext<any | undefined>(undefined);
-export const imagesContext = createContext<any | undefined>(undefined);
-
-
-const contextNames:Array<contextName> = [
-    {
-        contextName: 'userContext',
-        context: userContext,
-        initialValue:{
-            name: '',
-            email: '',
-            age:[],
-            gender: '',
-            location: '',
-            bio: '',
-            image: '',
-            followers: [],
-        }
+const contextNames: Array<ContextName> = [
+  {
+    contextName: "userContext",
+    initialValue: {
+      name: "",
+      email: "",
+      age: [],
+      gender: "",
+      location: "",
+      bio: "",
+      image: "",
+      followers: [],
+      loading:false
     },
+  },
+];
 
-    {
-        contextName: 'imagesContext',
-        context: imagesContext,
-        initialValue:{
-            images: [],
-            
-        }
-    },
-     
-]
-
-export default  contextNames
-
-
-
-
+export default contextNames;

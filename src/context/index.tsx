@@ -1,28 +1,33 @@
-import React, { ReactNode, useEffect, useMemo, useReducer } from "react";
-import { contextName } from "./contextTypes";
+import React, { ReactNode, createContext, useEffect, useMemo, useReducer } from "react";
 import useEasyState from "./useEasyState";
 import { getData, storeData } from "./offlineFunction";
+import { contextCreator, isPromise } from "./helper";
+import { ContextName } from "./contextTypes";
 
 type ProviderProps = {
   children: ReactNode;
-  contextsList: Array<contextName>;
+  contextsList: Array<ContextName>;
 };
 
-// Define the RenderContext component
+type ContextValue = {
+  state: any;
+  dispatch: React.Dispatch<any>;
+};
+
 function RenderContext({ context, index, children, initialValue }: any) {
   const reducer = (
     state: any,
-    action: { type: any; payload: any; paging: boolean; offline: boolean }
+    action: { type: any; payload: any; paging?: boolean; offline?: boolean }
   ) => {
     switch (action.type) {
-      case action.type === "oflineData":
+      case "offlineData":
         return {
           ...state,
           ...action.payload,
         };
 
-      case action.type:
-        if (action.offline && !action.paging) {
+      default:
+        if (action.offline) {
           storeData(action.type, action.payload);
         }
         if (action.paging) {
@@ -32,8 +37,6 @@ function RenderContext({ context, index, children, initialValue }: any) {
           };
         }
         return { ...state, [action.type]: action.payload };
-      default:
-        return state;
     }
   };
 
@@ -50,14 +53,13 @@ function RenderContext({ context, index, children, initialValue }: any) {
       const obj: any = {};
 
       Object.keys(state).map((val) => {
-        obj[val] = response[Object.keys(state).indexOf(val) || state[val]];
+        const result = response[Object.keys(state).indexOf(val)];
+        obj[val] = result ? result : state[val];
       });
 
       dispatch({
-        type: "oflineData",
+        type: "offlineData",
         payload: obj,
-        paging: false,
-        offline: false,
       });
     } catch (error) {
       console.log(error);
@@ -68,26 +70,27 @@ function RenderContext({ context, index, children, initialValue }: any) {
     getDataFunction();
   }, []);
 
-  // Create a context value object
-  const contextValue: Object = {
+  const contextValue: ContextValue = {
     state,
     dispatch,
   };
 
   return (
-    <context.Provider key={index} value={contextValue}>
+    <context.Provider value={contextValue}>
       {children}
     </context.Provider>
   );
 }
 
+export const globalContext = createContext<any | undefined>(undefined);
+
 export function Provider(props: ProviderProps) {
   const { contextsList } = props;
+  const contextList = contextCreator(contextsList);
 
-  // Create a nested structure of RenderContext components
   const renderStructure = useMemo(
     () =>
-      contextsList.reduceRight(
+      contextList.reduceRight(
         (children, data, index) => (
           <RenderContext
             context={data.context}
@@ -99,10 +102,14 @@ export function Provider(props: ProviderProps) {
         ),
         props.children
       ),
-    [contextsList, props.children]
+    [contextList, props.children]
   );
 
-  return <>{renderStructure}</>;
+  return (
+    <globalContext.Provider value={contextList}>
+      {renderStructure}
+    </globalContext.Provider>
+  );
 }
 
 export { useEasyState };

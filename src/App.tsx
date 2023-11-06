@@ -1,39 +1,38 @@
-import React, { useEffect } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { imagesContext, userContext } from './context/contextNames';
-import { useEasyState } from 'react-easy-state-management';
+import React, { useEffect } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { useEasyState } from "./context";
  
  
+
 function App() {
-  
-  const  [userstate , userDispatch ] = useEasyState(userContext)
-  const [ImageSate , imageDispatch ] = useEasyState(imagesContext)
+  const [userstate, userDispatch, showLoaderFnc] = useEasyState("userContext");
 
-  useEffect(()=>{
-    userDispatch({
-    type:"name",
-    payload:"Piyas",
-    offline:true
-  }) 
-  imageDispatch({
-    type:"username",
-    payload:"Piyas",
-    offline: false
+  const getData =()=> showLoaderFnc(async () => {
+    try {
+      let response = await fetch("https://jsonplaceholder.typicode.com/posts");
+      let data = await response.json();
+      userDispatch({
+        type: "followers",
+        payload:  data,
+        offline: true,
+      });
 
+     
+    } catch (error) {
+      console.error("Error:", error);
+    }
   })
-  userDispatch({
-    type:"email",
-    payload:"Piyas@gmail.com",
-    offline:true
-  })
- 
-  },[])
 
+  useEffect(() => {
+    getData()
+  }, []);
 
-  console.log(userstate)
+  console.log(userstate, "userstate");
 
-
+  if (userstate?.loading) {
+    return <h1>Loading.......</h1>;
+  }
 
   return (
     <div className="App">
@@ -48,9 +47,13 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          {userstate.name}
+          {userstate.name}
         </a>
       </header>
+      {userstate?.followers?.map((val: any, index: number) => {
+        return <p key={index}>{val.title}</p>;
+      })}
     </div>
   );
 }

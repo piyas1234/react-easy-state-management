@@ -7,8 +7,9 @@
       "esModuleInterop": true,
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true,
-      "outDir": "./dist",
-      "declaration": true
+      "outDir": "./dist", // Specifies the output directory
+      "declaration": true,
+      "declarationDir": "./dist/types" // Specifies t
     }
   }
   
