@@ -153,8 +153,71 @@ root.render(
   </React.StrictMode>
 );
 ```
+### Custom Hooks - useEasy()
 
-### Custom Hooks -easy way
+```javascript
+
+ function App() {
+  const [userstate, setState, showLoaderFnc] = useEasyOffline("userContext", {
+    users: [],
+    name: "",
+  });
+
+  const getData = () =>
+    showLoaderFnc(async () => {
+      try {
+        setState({
+          users: ["Piyas", "Hakim"],
+          name: "Piyas",
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    });
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  console.log(userstate);
+
+```
+
+
+### Custom Hooks - useEasyOffline() // automated store data in offline 
+
+```javascript
+
+function App() {
+  const [userstate, setState, showLoaderFnc] = useEasyOffline("userContext", {
+    users: [],
+    name: "",
+  });
+  const getData = () =>
+    showLoaderFnc(async () => {
+      try {
+        setState({
+          users: ["Piyas", "Hakim"],
+          name: "Piyas",
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    });
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  console.log(userstate, "userstate m");
+}
+
+```
+
+
+
+
+### Custom Hooks -useEasyState()  //easy way
 
 
  
@@ -189,7 +252,7 @@ function  App() {
 }
 ```
 
-### Custom Hooks -another way 
+### Custom Hooks - useEasyState()  // another way 
 
 You can access state and dispatch functions with custom hooks:
 

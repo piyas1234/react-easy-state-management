@@ -1,7 +1,15 @@
-import React, { ReactNode, createContext, useEffect, useMemo, useReducer } from "react";
+import React, {
+  ReactNode,
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
 import useEasyState from "./useEasyState";
+import useEasy from "./useEasy";
+import useEasyOffline from "./useEasyOffline";
 import { getData, storeData } from "./offlineFunction";
-import { contextCreator, isPromise } from "./helper";
+import { contextCreator } from "./helper";
 import { ContextName } from "./contextTypes";
 
 type ProviderProps = {
@@ -21,6 +29,17 @@ function RenderContext({ context, index, children, initialValue }: any) {
   ) => {
     switch (action.type) {
       case "offlineData":
+        return {
+          ...state,
+          ...action.payload,
+        };
+
+      case "useEasy":
+        return {
+          ...state,
+          ...action.payload,
+        };
+      case "useEasyOffline":
         return {
           ...state,
           ...action.payload,
@@ -75,11 +94,7 @@ function RenderContext({ context, index, children, initialValue }: any) {
     dispatch,
   };
 
-  return (
-    <context.Provider value={contextValue}>
-      {children}
-    </context.Provider>
-  );
+  return <context.Provider value={contextValue}>{children}</context.Provider>;
 }
 
 export const globalContext = createContext<any | undefined>(undefined);
@@ -112,4 +127,4 @@ export function Provider(props: ProviderProps) {
   );
 }
 
-export { useEasyState };
+export { useEasyState, useEasy , useEasyOffline};

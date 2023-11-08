@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = require("react");
 const index_1 = require("./index");
-function useEasyState(contextName, Initialize) {
+const offlineFunction_1 = require("./offlineFunction");
+function useEasyOffline(contextName, Initialize) {
     const contextListState = (0, react_1.useContext)(index_1.globalContext);
     const contextData = () => {
         if (typeof contextName === "string") {
-            const matchingContext = contextListState?.find((val) => val?.contextName === contextName);
+            const matchingContext = contextListState?.find((val) => val.contextName === contextName);
             if (!matchingContext) {
                 throw new Error(`Context with name '${contextName}' not found.`);
             }
@@ -20,6 +21,22 @@ function useEasyState(contextName, Initialize) {
         }
     };
     const { state, dispatch } = (0, react_1.useContext)(contextData());
+    const setState = (data) => {
+        if (typeof data === "object") {
+            Object.keys(data).map((key) => {
+                (0, offlineFunction_1.storeData)(key, data?.[key]);
+            });
+            setTimeout(() => {
+                dispatch({
+                    type: "useEasyOffline",
+                    payload: data,
+                });
+            }, 1);
+        }
+        else {
+            throw new Error("Data type should be object");
+        }
+    };
     const showLoader = (0, react_1.useCallback)(async (callback) => {
         dispatch({
             type: "loading",
@@ -36,6 +53,6 @@ function useEasyState(contextName, Initialize) {
             });
         }
     }, []);
-    return [{ ...Initialize, ...state }, dispatch, showLoader];
+    return [{ ...Initialize, ...state }, setState, showLoader];
 }
-exports.default = useEasyState;
+exports.default = useEasyOffline;

@@ -1,1 +1,1 @@
-export default function useEasyState(contextName: string | object): any[];
+export default function useEasyState(contextName: string | object, Initialize?: object): any[];

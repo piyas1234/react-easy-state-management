@@ -26,16 +26,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useEasyState = exports.Provider = exports.globalContext = void 0;
+exports.useEasyOffline = exports.useEasy = exports.useEasyState = exports.Provider = exports.globalContext = void 0;
 const react_1 = __importStar(require("react"));
 const useEasyState_1 = __importDefault(require("./useEasyState"));
 exports.useEasyState = useEasyState_1.default;
+const useEasy_1 = __importDefault(require("./useEasy"));
+exports.useEasy = useEasy_1.default;
+const useEasyOffline_1 = __importDefault(require("./useEasyOffline"));
+exports.useEasyOffline = useEasyOffline_1.default;
 const offlineFunction_1 = require("./offlineFunction");
 const helper_1 = require("./helper");
 function RenderContext({ context, index, children, initialValue }) {
     const reducer = (state, action) => {
         switch (action.type) {
             case "offlineData":
+                return {
+                    ...state,
+                    ...action.payload,
+                };
+            case "useEasy":
+                return {
+                    ...state,
+                    ...action.payload,
+                };
+            case "useEasyOffline":
                 return {
                     ...state,
                     ...action.payload,
@@ -82,7 +96,7 @@ function RenderContext({ context, index, children, initialValue }) {
         state,
         dispatch,
     };
-    return (react_1.default.createElement(context.Provider, { value: contextValue }, children));
+    return react_1.default.createElement(context.Provider, { value: contextValue }, children);
 }
 exports.globalContext = (0, react_1.createContext)(undefined);
 function Provider(props) {

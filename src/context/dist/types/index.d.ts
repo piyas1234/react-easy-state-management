@@ -1,5 +1,7 @@
 import React, { ReactNode } from "react";
 import useEasyState from "./useEasyState";
+import useEasy from "./useEasy";
+import useEasyOffline from "./useEasyOffline";
 import { ContextName } from "./contextTypes";
 type ProviderProps = {
     children: ReactNode;
@@ -7,4 +9,4 @@ type ProviderProps = {
 };
 export declare const globalContext: React.Context<any>;
 export declare function Provider(props: ProviderProps): React.JSX.Element;
-export { useEasyState };
+export { useEasyState, useEasy, useEasyOffline };

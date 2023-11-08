@@ -1,34 +1,31 @@
 import React, { useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { useEasyState } from "./context";
- 
- 
+import { useEasy, useEasyOffline } from "./context";
 
 function App() {
-  const [userstate, userDispatch, showLoaderFnc] = useEasyState("userContext");
+  const [userstate, setState, showLoaderFnc] = useEasyOffline("userContext", {
+    users: [],
+    name: "",
+  });
 
-  const getData =()=> showLoaderFnc(async () => {
-    try {
-      let response = await fetch("https://jsonplaceholder.typicode.com/posts");
-      let data = await response.json();
-      userDispatch({
-        type: "followers",
-        payload:  data,
-        offline: true,
-      });
-
-     
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  })
+  const getData = () =>
+    showLoaderFnc(async () => {
+      try {
+        setState({
+          users: ["Piyas", "Hakim"],
+          name: "Piyas",
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    });
 
   useEffect(() => {
-    getData()
+    getData();
   }, []);
 
-  console.log(userstate, "userstate");
+  console.log(userstate, "userstate m");
 
   if (userstate?.loading) {
     return <h1>Loading.......</h1>;
@@ -51,8 +48,8 @@ function App() {
           {userstate.name}
         </a>
       </header>
-      {userstate?.followers?.map((val: any, index: number) => {
-        return <p key={index}>{val.title}</p>;
+      {userstate.users.map((val: any, index: number) => {
+        return <p key={index}>{val}</p>;
       })}
     </div>
   );
