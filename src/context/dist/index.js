@@ -36,57 +36,53 @@ const useEasyOffline_1 = __importDefault(require("./useEasyOffline"));
 exports.useEasyOffline = useEasyOffline_1.default;
 const offlineFunction_1 = require("./offlineFunction");
 const helper_1 = require("./helper");
-function RenderContext({ context, index, children, initialValue }) {
+function RenderContext({ context, index, children, initialValue = {} }) {
     const reducer = (state, action) => {
         switch (action.type) {
             case "offlineData":
                 return {
                     ...state,
-                    ...action.payload,
+                    ...action.payload
                 };
             case "useEasy":
                 return {
                     ...state,
-                    ...action.payload,
+                    ...action.payload
                 };
             case "useEasyOffline":
                 return {
                     ...state,
-                    ...action.payload,
+                    ...action.payload
                 };
             default:
-                if (action.offline) {
-                    (0, offlineFunction_1.storeData)(action.type, action.payload);
-                }
-                if (action.paging) {
-                    return {
-                        ...state,
-                        [action.type]: [...state[action.type], ...action.payload],
-                    };
-                }
                 return { ...state, [action.type]: action.payload };
         }
     };
     const [state, dispatch] = (0, react_1.useReducer)(reducer, initialValue);
     const getDataFunction = async () => {
         try {
-            const promises = Object.keys(state).map(async (key) => {
+            const offlineStateKeys = await (0, offlineFunction_1.getKeys)();
+            const stateKeys = Object.keys(state);
+            const combinedKeys = new Set([...stateKeys, ...offlineStateKeys]);
+            const promises = Array.from(combinedKeys).map(async (key) => {
                 const data = await (0, offlineFunction_1.getData)(key);
-                return data;
+                return { key, data };
             });
-            const response = await Promise.all(promises);
-            const obj = {};
-            Object.keys(state).map((val) => {
-                const result = response[Object.keys(state).indexOf(val)];
-                obj[val] = result ? result : state[val];
+            const responses = await Promise.all(promises);
+            const mergedState = {};
+            responses.forEach(({ key, data }) => {
+                const keyArray = key.split(",");
+                if (keyArray?.[0] === context.displayName) {
+                    mergedState[key] = data !== null ? data : state[key];
+                }
             });
             dispatch({
                 type: "offlineData",
-                payload: obj,
+                payload: mergedState
             });
         }
         catch (error) {
-            console.log(error);
+            console.error("Error fetching data:", error);
         }
     };
     (0, react_1.useEffect)(() => {
@@ -94,7 +90,7 @@ function RenderContext({ context, index, children, initialValue }) {
     }, []);
     const contextValue = {
         state,
-        dispatch,
+        dispatch
     };
     return react_1.default.createElement(context.Provider, { value: contextValue }, children);
 }
@@ -102,7 +98,7 @@ exports.globalContext = (0, react_1.createContext)(undefined);
 function Provider(props) {
     const { contextsList } = props;
     const contextList = (0, helper_1.contextCreator)(contextsList);
-    const renderStructure = (0, react_1.useMemo)(() => contextList.reduceRight((children, data, index) => (react_1.default.createElement(RenderContext, { context: data.context, initialValue: data.initialValue, key: index }, children)), props.children), [contextList, props.children]);
+    const renderStructure = (0, react_1.useMemo)(() => contextList.reduceRight((children, data, index) => (react_1.default.createElement(RenderContext, { context: data.context, initialValue: data?.initialValue, key: index }, children)), props.children), [contextList, props.children]);
     return (react_1.default.createElement(exports.globalContext.Provider, { value: contextList }, renderStructure));
 }
 exports.Provider = Provider;

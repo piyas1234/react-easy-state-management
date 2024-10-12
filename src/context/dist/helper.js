@@ -5,9 +5,11 @@ const react_1 = require("react");
 const contextCreator = (contextNames) => {
     try {
         const result = contextNames.map((context) => {
+            const setContext = context.context || (0, react_1.createContext)(context.initialValue);
+            setContext.displayName = context.contextName;
             return {
                 ...context,
-                context: context.context || (0, react_1.createContext)(context.initialValue),
+                context: setContext
             };
         });
         return result;

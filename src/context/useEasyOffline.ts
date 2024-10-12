@@ -30,13 +30,13 @@ export default function useEasyOffline(
   const setState = (data: object | any) => {
     if (typeof data === "object") {
       Object.keys(data).map((key) => {
-        storeData(key, data?.[key]);
+        storeData(contextName + "," + key, data?.[key]);
       });
 
       setTimeout(() => {
         dispatch({
           type: "useEasyOffline", // Replace with your specific loading action type
-          payload: data,
+          payload: data
         });
       }, 1);
     } else {
@@ -47,7 +47,7 @@ export default function useEasyOffline(
   const showLoader = useCallback(async (callback: () => any) => {
     dispatch({
       type: "loading", // Replace with your specific loading action type
-      payload: true,
+      payload: true
     });
     try {
       const response = await callback();
@@ -55,10 +55,24 @@ export default function useEasyOffline(
     } finally {
       dispatch({
         type: "loading", // Replace with your specific loading action type
-        payload: false,
+        payload: false
       });
     }
   }, []);
 
-  return [{ ...Initialize, ...state }, setState, showLoader];
+  const keysState = Object.keys(state);
+
+  // Define the type of modifiedState properly to allow dynamic keys
+  const modifiedState: any = {};
+
+  keysState.forEach((key) => {
+    const keysArray = key.split(",");
+    if (keysArray[1] !== undefined && keysArray.length!=1) {
+      modifiedState[keysArray[1]] = state[key];
+    }else{
+      modifiedState[keysArray[0]] = state[key];
+    }
+  });
+
+  return [{ ...Initialize, ...modifiedState }, setState, showLoader];
 }

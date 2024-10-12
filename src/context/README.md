@@ -1,5 +1,7 @@
- 
- 
+Here’s a refined and professional version of your `README.md` file for **React Easy State Management**:
+
+---
+
 # React Easy State Management
 
 A Professional State Management Library for React Applications
@@ -14,9 +16,10 @@ A Professional State Management Library for React Applications
 - [Overview](#overview)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Online Paging with Dispatch](#online-paging-with-dispatch)
+  - [Provider Setup](#provider-setup)
+  - [Creating Contexts](#creating-contexts)
+  - [Custom Hooks](#custom-hooks)
   - [Offline Data Storage](#offline-data-storage)
-  - [useEasyState Hook](#useeasystate-hook)
 - [Context Structure](#context-structure)
 - [Contributing](#contributing)
 - [License](#license)
@@ -24,175 +27,98 @@ A Professional State Management Library for React Applications
 
 ## Overview
 
-**React Easy State Management** is a professional-grade state management library designed for React applications. It simplifies state management and provides features like online paging and offline data storage. Use it to enhance your React app's development and management.
+**React Easy State Management** is a lightweight, yet powerful state management library designed to streamline the development of React applications. It supports features like online paging and offline data storage, making it a flexible and professional-grade solution for managing your app’s state.
 
-[Full Documentation](https://piyas1234.github.io/react-easy-state-management/)
+For detailed documentation, visit the [Full Documentation](https://piyas1234.github.io/react-easy-state-management/).
 
 ## Installation
 
-To integrate **React Easy State Management** into your project, follow these steps:
+To install **React Easy State Management**, run the following commands in your project:
 
-1. Install the library using npm or yarn:
+```bash
+npm install react-easy-state-management
+```
 
-   ```shell
-   npm install react-easy-state-management
-   ```
+or
 
-   ```shell
-   yarn add react-easy-state-management
-   ```
+```bash
+yarn add react-easy-state-management
+```
 
-2. Import the required components into your React application:
+Once installed, import the necessary components in your React app:
 
-   ```javascript
-   import { Provider, useEasyState } from "react-easy-state-management";
-   ```
-
-3. Set up your state context and use the provided hooks to manage and access your application's state.
+```javascript
+import { Provider, useEasyState } from "react-easy-state-management";
+```
 
 ## Usage
 
-**React Easy State Management** provides a seamless way to manage your React application's state. Below are some advanced features:
+### Provider Setup
 
-### Creating Contexts - easy way 
-
-First, you need to create contexts for your application's different data structures. For example:
+Wrap your root component with the `Provider` component to initialize state management across your app:
 
 ```javascript
-import { ContextName } from  "./contextTypes";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { Provider } from 'react-easy-state-management';
+import contextNames from './context/contextNames';
 
-const contextNames: Array<ContextName> = [
-  {
-    contextName: "userContext",
-    initialValue: {
-      name:  "",
-      email:  "",
-      age: [],
-      gender:  "",
-      location:  "",
-      bio:  "",
-      image:  "",
-      followers: [],
-      loading:  false,
-    },
-  },
-  {
-    contextName: "images",
-    initialValue: {
-      images: [],
-    },
-  },
-];
-```
-
-
-### Creating Contexts another way 
-
-  
-
-First, you need to create contexts for your application's different data structures. For example:
-
-  
-  ```javascript
-import { ContextName } from  "./contextTypes";
-import { createContext } from  'react';
-
-// Create contexts
-
-export  const  userContext  =  createContext<any  |  undefined>(undefined);
-export  const  imagesContext  =  createContext<any  |  undefined>(undefined);
-
-const contextNames: Array<ContextName> = [
-  {
-    contextName: "userContext",
-    context:  userContext,
-    initialValue: {
-      name:  "",
-      email:  "",
-      age: [],
-      gender:  "",
-      location:  "",
-      bio:  "",
-      image:  "",
-      followers: [],
-      loading:  false,
-    },
-  },
-  {
-    contextName: "images",
-    context:  imagesContext,
-    initialValue: {
-      images: [],
-    },
-  },
-];
-```
-
-### Using `Provider`
-
-To use this state management package, you can wrap your components with the `Provider` component. This component allows you to set up context providers for your application.
-
-```javascript
-import  React  from  'react';
-import  ReactDOM  from  'react-dom/client';
-import  './index.css';
-import  App  from  './App';
-import  reportWebVitals  from  './reportWebVitals';
-import  contextNames  from  './context/contextNames';
-import { Provider } from  'react-easy-state-management';
-
-const  root  =  ReactDOM.createRoot(
-  document.getElementById('root')  as  HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <Provider  contextsList={contextNames}>
+    <Provider contextsList={contextNames}>
       <App />
     </Provider>
   </React.StrictMode>
 );
 ```
-### Custom Hooks - useEasy()
+
+### Creating Contexts
+
+Define the contexts for your application by providing initial values for each data structure. For instance:
 
 ```javascript
+import { ContextName } from "./contextTypes";
 
- function App() {
-  const [userstate, setState, showLoaderFnc] = useEasyOffline("userContext", {
-    users: [],
-    name: "",
-  });
-
-  const getData = () =>
-    showLoaderFnc(async () => {
-      try {
-        setState({
-          users: ["Piyas", "Hakim"],
-          name: "Piyas",
-        });
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    });
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  console.log(userstate);
-
+const contextNames: Array<ContextName> = [
+  {
+    contextName: "userContext",
+    initialValue: {
+      name: "",
+      email: "",
+      age: [],
+      gender: "",
+      location: "",
+      bio: "",
+      image: "",
+      followers: [],
+      loading: false,
+    },
+  },
+  {
+    contextName: "images",
+    initialValue: {
+      images: [],
+    },
+  },
+];
 ```
 
+### Custom Hooks
 
-### Custom Hooks - useEasyOffline() // automated store data in offline 
+#### `useEasy()`
+
+The `useEasy()` hook allows you to easily manage state within your components:
 
 ```javascript
-
 function App() {
-  const [userstate, setState, showLoaderFnc] = useEasyOffline("userContext", {
+  const [userState, setState, showLoaderFnc] = useEasy("userContext", {
     users: [],
     name: "",
   });
+
   const getData = () =>
     showLoaderFnc(async () => {
       try {
@@ -209,86 +135,44 @@ function App() {
     getData();
   }, []);
 
-  console.log(userstate, "userstate m");
-}
-
-```
-
-
-
-
-### Custom Hooks -useEasyState()  //easy way
-
-
- 
-
-```javascript
-import  React, { useEffect } from  'react';
-import { imagesContext, userContext } from  './context/contextNames';
-import { useEasyState } from  'react-easy-state-management';
-
-function  App() {
-  const [userstate , userDispatch ] =  useEasyState('userContext')
-  const [ImageSate , imageDispatch ] =  useEasyState('imagesContext')
-
-  useEffect(()=>{
-    userDispatch({
-      type:"name",
-      payload:"Piyas",
-      offline:true
-    })
-    imageDispatch({
-      type:"username",
-      payload:"Piyas",
-      offline:  false
-    })
-    userDispatch({
-      type:"email",
-      payload:"Piyas@gmail.com",
-      offline:true
-    })
-  },[])
-  console.log(userstate)
+  console.log(userState);
 }
 ```
 
-### Custom Hooks - useEasyState()  // another way 
+#### `useEasyOffline()`
 
-You can access state and dispatch functions with custom hooks:
+The `useEasyOffline()` hook extends the functionality by automatically storing data offline:
 
 ```javascript
-import  React, { useEffect } from  'react';
-import { imagesContext, userContext } from  './context/contextNames';
-import { useEasyState } from  'react-easy-state-management';
+function App() {
+  const [userState, setState, showLoaderFnc] = useEasyOffline("userContext", {
+    users: [],
+    name: "",
+  });
 
-function  App() {
-  const [userstate , userDispatch ] =  useEasyState(userContext)
-  const [ImageSate , imageDispatch ] =  useEasyState(imagesContext)
+  const getData = () =>
+    showLoaderFnc(async () => {
+      try {
+        setState({
+          users: ["Piyas", "Hakim"],
+          name: "Piyas",
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    });
 
-  useEffect(()=>{
-    userDispatch({
-      type:"name",
-      payload:"Piyas",
-      offline:true
-    })
-    imageDispatch({
-      type:"username",
-      payload:"Piyas",
-      offline:  false
-    })
-    userDispatch({
-      type:"email",
-      payload:"Piyas@gmail.com",
-      offline:true
-    })
-  },[])
-  console.log(userstate)
+  useEffect(() => {
+    getData();
+  }, []);
+
+  console.log(userState, "userState");
 }
 ```
 
 ### Offline Data Storage
 
-**React Easy State Management** simplifies offline data storage. You can set offline data using the "key" and "online" properties in the `dispatch` function. Here's how to use it:
+With **React Easy State Management**, saving data offline is simple. Use the `dispatch` function with the `offline` option:
 
 ```javascript
 import React from "react";
@@ -297,13 +181,11 @@ import { useEasyState } from "react-easy-state-management";
 function MyComponent() {
   const [userData, userDispatch] = useEasyState("userContext");
 
-  // Simulate fetching user data from an API
   const fetchUserData = async () => {
     try {
       const response = await fetch("https://api.example.com/user-data");
       const user = await response.json();
 
-      // Store the user data offline using the "offline" property
       userDispatch({
         type: "userData",
         payload: user,
@@ -312,46 +194,26 @@ function MyComponent() {
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
-  }
-}
-```
-
-### useEasyState Hook
-
-The `useEasyState` hook allows you to access your state context easily. Here's how you can use it:
-
-```javascript
-import React from "react";
-import { useEasyState } from "react-easy-state-management";
-
-function MyComponent() {
-  // Access your state context using useEasyState
-  const [userState, userDispatch] = useEasyState("userContext");
-
-  // Use userState and userDispatch as needed
+  };
 }
 ```
 
 ## Context Structure
 
-Customize the context structure to match your application's specific requirements. **React Easy State Management** allows you to create multiple contexts for different sections of your app.
-
-
+Customize the context structure to meet your app’s needs. Each context can have its own structure, making **React Easy State Management** adaptable for various use cases.
 
 ## Contributing
 
-We welcome contributions from the community. To contribute to this project, create a pull request or open an issue. Your feedback and contributions are valuable and appreciated.
+Contributions are welcome! To contribute, please fork the repository, create a new branch, and submit a pull request. For issues, feel free to [open an issue](https://github.com/piyas1234/react-easy-state-management/issues). We appreciate all feedback and contributions.
 
 ## License
 
-This project is licensed under the MIT License. For more information, see the [LICENSE](LICENSE) file.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Author
 
-- **Piyas Talukder**
-- GitHub: [Piyas Talukder on GitHub](https://github.com/piyas1234)
+- **Piyas Talukder** - [GitHub](https://github.com/piyas1234)
 
-[GitHub Repository](https://github.com/piyas1234/react-easy-state-management)
- 
+---
 
- 
+This version of the `README.md` is structured, informative, and professional. It includes a clear explanation of the features, installation instructions, usage examples, and contribution guidelines, ensuring it is user-friendly for both beginners and experienced developers.

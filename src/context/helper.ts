@@ -4,9 +4,13 @@ export const contextCreator = (contextNames: any[]) => {
   try {
     const result = contextNames.map(
       (context: { contextName: any; initialValue: any; context: any }) => {
+        const setContext =
+          context.context || createContext(context.initialValue);
+        setContext.displayName = context.contextName;
+
         return {
           ...context,
-          context: context.context || createContext(context.initialValue),
+          context: setContext
         };
       }
     );

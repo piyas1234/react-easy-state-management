@@ -49,6 +49,17 @@ function useEasy(contextName, Initialize) {
             });
         }
     }, []);
-    return [{ ...Initialize, ...state }, setState, showLoader];
+    const keysState = Object.keys(state);
+    const modifiedState = {};
+    keysState.forEach((key) => {
+        const keysArray = key.split(",");
+        if (keysArray[1] !== undefined && keysArray.length != 1) {
+            modifiedState[keysArray[1]] = state[key];
+        }
+        else {
+            modifiedState[keysArray[0]] = state[key];
+        }
+    });
+    return [{ ...Initialize, ...modifiedState }, setState, showLoader];
 }
 exports.default = useEasy;

@@ -3,12 +3,12 @@ import React, {
   createContext,
   useEffect,
   useMemo,
-  useReducer,
+  useReducer
 } from "react";
 import useEasyState from "./useEasyState";
 import useEasy from "./useEasy";
 import useEasyOffline from "./useEasyOffline";
-import { getData, storeData } from "./offlineFunction";
+import { getData, getKeys, storeData } from "./offlineFunction";
 import { contextCreator } from "./helper";
 import { ContextName } from "./contextTypes";
 
@@ -22,7 +22,7 @@ type ContextValue = {
   dispatch: React.Dispatch<any>;
 };
 
-function RenderContext({ context, index, children, initialValue }: any) {
+function RenderContext({ context, index, children, initialValue = {} }: any) {
   const reducer = (
     state: any,
     action: { type: any; payload: any; paging?: boolean; offline?: boolean }
@@ -31,30 +31,21 @@ function RenderContext({ context, index, children, initialValue }: any) {
       case "offlineData":
         return {
           ...state,
-          ...action.payload,
+          ...action.payload
         };
 
       case "useEasy":
         return {
           ...state,
-          ...action.payload,
+          ...action.payload
         };
       case "useEasyOffline":
         return {
           ...state,
-          ...action.payload,
+          ...action.payload
         };
 
       default:
-        if (action.offline) {
-          storeData(action.type, action.payload);
-        }
-        if (action.paging) {
-          return {
-            ...state,
-            [action.type]: [...state[action.type], ...action.payload],
-          };
-        }
         return { ...state, [action.type]: action.payload };
     }
   };
@@ -63,25 +54,30 @@ function RenderContext({ context, index, children, initialValue }: any) {
 
   const getDataFunction = async () => {
     try {
-      const promises = Object.keys(state).map(async (key) => {
+      const offlineStateKeys: string[] = await getKeys();
+      const stateKeys = Object.keys(state);
+      const combinedKeys = new Set([...stateKeys, ...offlineStateKeys]);
+
+      const promises = Array.from(combinedKeys).map(async (key) => {
         const data = await getData(key);
-        return data;
+        return { key, data };
       });
-      const response = await Promise.all(promises);
+      const responses = await Promise.all(promises);
+      const mergedState: any = {};
+      responses.forEach(({ key, data }) => {
+        const keyArray = key.split(",");
 
-      const obj: any = {};
-
-      Object.keys(state).map((val) => {
-        const result = response[Object.keys(state).indexOf(val)];
-        obj[val] = result ? result : state[val];
+        if (keyArray?.[0] === context.displayName) {
+          mergedState[key] = data !== null ? data : state[key];
+        }
       });
 
       dispatch({
         type: "offlineData",
-        payload: obj,
+        payload: mergedState
       });
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -91,7 +87,7 @@ function RenderContext({ context, index, children, initialValue }: any) {
 
   const contextValue: ContextValue = {
     state,
-    dispatch,
+    dispatch
   };
 
   return <context.Provider value={contextValue}>{children}</context.Provider>;
@@ -109,7 +105,7 @@ export function Provider(props: ProviderProps) {
         (children, data, index) => (
           <RenderContext
             context={data.context}
-            initialValue={data.initialValue}
+            initialValue={data?.initialValue}
             key={index}
           >
             {children}
@@ -127,4 +123,4 @@ export function Provider(props: ProviderProps) {
   );
 }
 
-export { useEasyState, useEasy , useEasyOffline};
+export { useEasyState, useEasy, useEasyOffline };
